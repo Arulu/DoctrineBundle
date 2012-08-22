@@ -38,7 +38,7 @@
         "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
     },
     "autoload": {
-        "psr-0": { "Doctrine\\Bundle\\DoctrineBundle": "" }
+        "psr-0": { "Arulu\\Bundle\\DoctrineBundle": "" }
     },
     "target-dir": "Arulu/Bundle/DoctrineBundle",
     "minimum-stability": "dev",
