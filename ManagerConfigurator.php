@@ -12,7 +12,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Doctrine\Bundle\DoctrineBundle;
+namespace Arulu\Bundle\DoctrineBundle;
 
 use Doctrine\ORM\EntityManager;
 

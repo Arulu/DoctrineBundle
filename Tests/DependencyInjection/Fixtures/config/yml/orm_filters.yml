@@ -8,5 +8,5 @@ doctrine:
     orm:
         filters:
             soft_delete:
-                class: Doctrine\Bundle\DoctrineBundle\Tests\DependencyInjection\TestFilter
+                class: Arulu\Bundle\DoctrineBundle\Tests\DependencyInjection\TestFilter
                 enabled: true

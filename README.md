@@ -1,5 +1,7 @@
 # Doctrine Bundle
 
+This fork includes cross-database joins in MySQL.
+
 Doctrine DBAL & ORM Bundle for the Symfony Framework.
 
 Because Symfony 2 does not want to force or suggest a specific persistence solutions on the users

@@ -40,7 +40,7 @@
     "autoload": {
         "psr-0": { "Doctrine\\Bundle\\DoctrineBundle": "" }
     },
-    "target-dir": "Doctrine/Bundle/DoctrineBundle",
+    "target-dir": "Arulu/Bundle/DoctrineBundle",
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {

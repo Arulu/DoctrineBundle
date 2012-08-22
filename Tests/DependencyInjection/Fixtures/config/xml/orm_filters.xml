@@ -12,7 +12,7 @@
         </dbal>
 
         <orm>
-            <filter name="soft_delete" enabled="true">Doctrine\Bundle\DoctrineBundle\Tests\DependencyInjection\TestFilter</filter>
+            <filter name="soft_delete" enabled="true">Arulu\Bundle\DoctrineBundle\Tests\DependencyInjection\TestFilter</filter>
         </orm>
     </config>
 </srv:container>

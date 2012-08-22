@@ -12,7 +12,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Doctrine\Bundle\DoctrineBundle\DependencyInjection;
+namespace Arulu\Bundle\DoctrineBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
@@ -389,8 +389,31 @@ class DoctrineExtension extends AbstractDoctrineExtension
         $this->loadMappingInformation($entityManager, $container);
         $this->registerMappingDrivers($entityManager, $container);
 
+		$databases = $this->loadDatabasesInformation($entityManager, $container);
+
         $ormConfigDef->addMethodCall('setEntityNamespaces', array($this->aliasMap));
+		$ormConfigDef->addMethodCall('setEntityDatabases', array($databases));
     }
+
+	protected function loadDatabasesInformation(array $entityManager, ContainerBuilder $container)
+	{
+		$databases = array();
+
+		foreach($entityManager['mappings'] as $bundle => $config)
+		{
+			if(!isset($config['connection']))
+			{
+				$config['connection'] = $entityManager['connection'];
+			}
+
+			$database = $container->getDefinition(sprintf('doctrine.dbal.%s_connection', $config['connection']))
+				->getArgument(0)['dbname'];
+
+			$databases[$bundle] = $database;
+		}
+
+		return $databases;
+	}
 
     /**
      * {@inheritDoc}

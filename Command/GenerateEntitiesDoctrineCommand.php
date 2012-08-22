@@ -12,14 +12,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Doctrine\Bundle\DoctrineBundle\Command;
+namespace Arulu\Bundle\DoctrineBundle\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\ORM\Tools\EntityRepositoryGenerator;
-use Doctrine\Bundle\DoctrineBundle\Mapping\DisconnectedMetadataFactory;
+use Arulu\Bundle\DoctrineBundle\Mapping\DisconnectedMetadataFactory;
 
 /**
  * Generate entity classes from mapping information

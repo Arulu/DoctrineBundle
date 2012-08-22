@@ -12,9 +12,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Doctrine\Bundle\DoctrineBundle\Tests;
+namespace Arulu\Bundle\DoctrineBundle\Tests;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Arulu\Bundle\DoctrineBundle\Registry;
 
 class RegistryTest extends TestCase
 {
