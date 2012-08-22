@@ -1,5 +1,5 @@
 {
-    "name": "arulu/doctrine-bundle",
+    "name": "doctrine/doctrine-bundle",
     "type": "symfony-bundle",
     "description": "Arulu DoctrineBundle",
     "keywords": ["DBAL", "ORM", "Database", "Persistence"],
@@ -38,9 +38,9 @@
         "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
     },
     "autoload": {
-        "psr-0": { "Arulu\\Bundle\\DoctrineBundle": "" }
+        "psr-0": { "Doctrine\\Bundle\\DoctrineBundle": "" }
     },
-    "target-dir": "Arulu/Bundle/DoctrineBundle",
+    "target-dir": "Doctrine/Bundle/DoctrineBundle",
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {

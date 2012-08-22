@@ -12,7 +12,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle\Command;
+namespace Doctrine\Bundle\DoctrineBundle\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;

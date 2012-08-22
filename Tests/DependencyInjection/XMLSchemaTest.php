@@ -12,7 +12,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle\Tests\DependencyInjection;
+namespace Doctrine\Bundle\DoctrineBundle\Tests\DependencyInjection;
 
 class XMLSchemaTest extends \PHPUnit_Framework_TestCase
 {

@@ -12,7 +12,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle\DependencyInjection;
+namespace Doctrine\Bundle\DoctrineBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;

@@ -12,7 +12,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle\Tests\DependencyInjection;
+namespace Doctrine\Bundle\DoctrineBundle\Tests\DependencyInjection;
 
 use Doctrine\ORM\Query\Filter\SQLFilter;
 use Doctrine\ORM\Mapping\ClassMetadata;

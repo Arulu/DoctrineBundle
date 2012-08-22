@@ -12,7 +12,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle;
+namespace Doctrine\Bundle\DoctrineBundle;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;

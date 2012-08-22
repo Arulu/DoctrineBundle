@@ -12,12 +12,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle;
+namespace Doctrine\Bundle\DoctrineBundle;
 
 use Doctrine\Common\Util\ClassUtils;
-use Arulu\Bundle\DoctrineBundle\Command\CreateDatabaseDoctrineCommand;
-use Arulu\Bundle\DoctrineBundle\Command\DropDatabaseDoctrineCommand;
-use Arulu\Bundle\DoctrineBundle\Command\Proxy\RunSqlDoctrineCommand;
+use Doctrine\Bundle\DoctrineBundle\Command\CreateDatabaseDoctrineCommand;
+use Doctrine\Bundle\DoctrineBundle\Command\DropDatabaseDoctrineCommand;
+use Doctrine\Bundle\DoctrineBundle\Command\Proxy\RunSqlDoctrineCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

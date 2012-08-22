@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle\Tests;
+namespace Doctrine\Bundle\DoctrineBundle\Tests;
 
-use Arulu\Bundle\DoctrineBundle\Tests\TestCase;
-use Arulu\Bundle\DoctrineBundle\Mapping\MetadataFactory;
-use Arulu\Bundle\DoctrineBundle\Mapping\ClassMetadataCollection;
+use Doctrine\Bundle\DoctrineBundle\Tests\TestCase;
+use Doctrine\Bundle\DoctrineBundle\Mapping\MetadataFactory;
+use Doctrine\Bundle\DoctrineBundle\Mapping\ClassMetadataCollection;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 class MetadataFactoryTest extends TestCase
@@ -35,7 +35,7 @@ class MetadataFactoryTest extends TestCase
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $factory = new MetadataFactory($registry);
 
-        $this->setExpectedException("RuntimeException", "Can't find base path for \"Arulu\Bundle\DoctrineBundle\Tests\MetadataFactoryTest");
+        $this->setExpectedException("RuntimeException", "Can't find base path for \"Doctrine\Bundle\DoctrineBundle\Tests\MetadataFactoryTest");
         $factory->findNamespaceAndPathForMetadata($collection);
     }
 }

@@ -12,7 +12,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle\Mapping;
+namespace Doctrine\Bundle\DoctrineBundle\Mapping;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;

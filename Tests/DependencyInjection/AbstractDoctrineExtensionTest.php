@@ -12,10 +12,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Arulu\Bundle\DoctrineBundle\Tests\DependencyInjection;
+namespace Doctrine\Bundle\DoctrineBundle\Tests\DependencyInjection;
 
-use Arulu\Bundle\DoctrineBundle\Tests\TestCase;
-use Arulu\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
+use Doctrine\Bundle\DoctrineBundle\Tests\TestCase;
+use Doctrine\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
@@ -761,7 +761,7 @@ abstract class AbstractDoctrineExtensionTest extends \PHPUnit_Framework_TestCase
         $this->compileContainer($container);
 
         $definition = $container->getDefinition('doctrine.orm.default_configuration');
-        $this->assertDICDefinitionMethodCallOnce($definition, 'addFilter', array('soft_delete', 'Arulu\Bundle\DoctrineBundle\Tests\DependencyInjection\TestFilter'));
+        $this->assertDICDefinitionMethodCallOnce($definition, 'addFilter', array('soft_delete', 'Doctrine\Bundle\DoctrineBundle\Tests\DependencyInjection\TestFilter'));
 
         $definition = $container->getDefinition('doctrine.orm.default_manager_configurator');
         $this->assertDICConstructorArguments($definition, array(array('soft_delete')));
