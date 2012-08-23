@@ -32,6 +32,9 @@ use Symfony\Component\Config\FileLocator;
  */
 class DoctrineExtension extends AbstractDoctrineExtension
 {
+	protected $connectionMap = array();
+	protected $connections = array();
+
     /**
      * {@inheritDoc}
      */
@@ -288,6 +291,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
             'setClassMetadataFactoryName' => $entityManager['class_metadata_factory_name'],
             'setDefaultRepositoryClassName' => $entityManager['default_repository_class'],
         );
+
         // check for version to keep BC
         if (version_compare(\Doctrine\ORM\Version::VERSION, "2.3.0-DEV") >= 0) {
             $methods = array_merge($methods, array(
@@ -323,7 +327,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
         }
 
         $managerConfiguratorName = sprintf('doctrine.orm.%s_manager_configurator', $entityManager['name']);
-        $managerConfiguratorDef = $container
+        $container
             ->setDefinition($managerConfiguratorName, new DefinitionDecorator('doctrine.orm.manager_configurator.abstract'))
             ->replaceArgument(0, $enabledFilters)
         ;
@@ -332,10 +336,9 @@ class DoctrineExtension extends AbstractDoctrineExtension
             $entityManager['connection'] = $this->defaultConnection;
         }
 
-        $container
-            ->setDefinition(sprintf('doctrine.orm.%s_entity_manager', $entityManager['name']), new DefinitionDecorator('doctrine.orm.entity_manager.abstract'))
+        $container->setDefinition(sprintf('doctrine.orm.%s_entity_manager', $entityManager['name']), new DefinitionDecorator('doctrine.orm.entity_manager.abstract'))
             ->setArguments(array(
-                new Reference(sprintf('doctrine.dbal.%s_connection', $entityManager['connection'])),
+				new Reference(sprintf('doctrine.dbal.%s_connection', $entityManager['connection'])),
                 new Reference(sprintf('doctrine.orm.%s_configuration', $entityManager['name']))
             ))
             ->setConfigurator(array(new Reference($managerConfiguratorName), 'configure'))
@@ -385,34 +388,50 @@ class DoctrineExtension extends AbstractDoctrineExtension
         // reset state of drivers and alias map. They are only used by this methods and children.
         $this->drivers = array();
         $this->aliasMap = array();
+		$this->connectionMap = array();
 
+		// backwards compatibility
+		$mappings = function($entityManager)
+		{
+			$mappings = array();
+
+			foreach($entityManager as $mapping => $database)
+			{
+				$mappings = array_merge($mappings, $database);
+			}
+
+			return $mappings;
+		};
+
+		$entityManager['database_mappings'] = $entityManager['mappings'];
+		$entityManager['mappings'] = $mappings($entityManager['mappings']);
+
+		$this->loadConnections($entityManager['database_mappings']);
         $this->loadMappingInformation($entityManager, $container);
         $this->registerMappingDrivers($entityManager, $container);
 
-		$databases = $this->loadDatabasesInformation($entityManager, $container);
-
         $ormConfigDef->addMethodCall('setEntityNamespaces', array($this->aliasMap));
-		$ormConfigDef->addMethodCall('setEntityDatabases', array($databases));
+		$ormConfigDef->addMethodCall('setConnections', array($this->connections));
+		$ormConfigDef->addMethodCall('setConnectionMap', array($this->connectionMap));
     }
 
-	protected function loadDatabasesInformation(array $entityManager, ContainerBuilder $container)
+	protected function loadConnections(array $databaseMappings)
 	{
-		$databases = array();
-
-		foreach($entityManager['mappings'] as $bundle => $config)
+		foreach($databaseMappings as $conn => $bundle)
 		{
-			if(!isset($config['connection']))
+			foreach($bundle as $name => $value)
 			{
-				$config['connection'] = $entityManager['connection'];
+				$connectionInstance = new Reference(sprintf('doctrine.dbal.%s_connection', $conn));
+
+				$this->connectionMap[$name] = array(
+					'name' => $conn,
+					'instance' => new Reference(sprintf('doctrine.dbal.%s_connection', $conn))
+				);
+
+				if(!isset($this->connections[$conn]))
+					$this->connections[$conn] = $connectionInstance;
 			}
-
-			$database = $container->getDefinition(sprintf('doctrine.dbal.%s_connection', $config['connection']))
-				->getArgument(0)['dbname'];
-
-			$databases[$bundle] = $database;
 		}
-
-		return $databases;
 	}
 
     /**

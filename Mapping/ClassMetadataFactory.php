@@ -8,6 +8,8 @@
 namespace Doctrine\Bundle\DoctrineBundle\Mapping;
 
 use Doctrine\ORM\Mapping\ClassMetadataFactory as BaseClassMetadataFactory;
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Connection;
 
 class ClassMetadataFactory extends BaseClassMetadataFactory
 {
@@ -21,10 +23,12 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 	 */
 	protected $loadedMetadata = array();
 
+	protected $connectionMetadata = array();
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setEntityManager(\Doctrine\ORM\EntityManager $entityManager)
+	public function setEntityManager(EntityManager $entityManager)
 	{
 		parent::setEntityManager($entityManager);
 
@@ -54,10 +58,39 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 	{
 		$this->loadedMetadata[$className] = parent::getMetadataFor($className);
 
-		// inject database if exists
-		$database = $this->em->getConfiguration()->getEntityDatabase($className);
-		$this->loadedMetadata[$className]->setDatabase($database);
+		if(!isset($this->connectionMetadata[$className]))
+		{
+			preg_match("/(.*)Bundle/i", $className, $bundle);
+
+			$alias = explode("\\", $bundle[0]);
+
+			$connection = $this->em->getConfiguration()->getConnectionFor(array_pop($alias));
+
+			$this->loadedMetadata[$className]->setConnection($connection['instance']);
+			$this->connectionMetadata[$className] = true;
+		}
 
 		return $this->loadedMetadata[$className];
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getMetadataForConnection(Connection $connection)
+	{
+		$metadatas = parent::getAllMetadata();
+
+		$metadatasConnection = array();
+
+		// look for specific metadata in this connection
+		foreach($metadatas as $metadata)
+		{
+			if($metadata->hasConnection($connection))
+			{
+				$metadatasConnection[] = $metadata;
+			}
+		}
+
+		return $metadatasConnection;
 	}
 }

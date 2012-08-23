@@ -68,6 +68,35 @@ EOT
     {
         DoctrineCommandHelper::setApplicationEntityManager($this->getApplication(), $input->getOption('em'));
 
-        parent::execute($input, $output);
+		$emHelper = $this->getHelper('em');
+
+		$em = $emHelper->getEntityManager();
+
+		foreach($em->getConfiguration()->getConnections() as $connection)
+		{
+			$output->writeln('Processing database <info>' .$connection->getDatabase(). '</info>');
+
+			// hacked this to change entityManager connection
+			$entityManager = new \ReflectionObject($em);
+			$property = $entityManager->getProperty('conn');
+
+			$property->setAccessible(true);
+			$property->setValue($em, $connection);
+
+			$metadatas = $em->getMetadataFactory()->getMetadataForConnection($connection);
+
+			if ( ! empty($metadatas)) {
+				// Create SchemaTool
+				$tool = new \Doctrine\ORM\Tools\SchemaTool($em);
+
+				$this->executeSchemaCommand($input, $output, $tool, $metadatas);
+			} else {
+				$output->write('No Metadata Classes to process.' . PHP_EOL);
+			}
+
+			unset($entityManager);
+
+			$output->writeln("");
+		}
     }
 }

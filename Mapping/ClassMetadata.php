@@ -8,19 +8,28 @@
 namespace Doctrine\Bundle\DoctrineBundle\Mapping;
 
 use Doctrine\ORM\Mapping\ClassMetadata as BaseClassMetadata;
+use Doctrine\DBAL\Connection;
 
 class ClassMetadata extends BaseClassMetadata
 {
-	protected $database = null;
+	/**
+	 * @var Connection
+	 */
+	protected $connection;
 
-	public function setDatabase($database)
+	public function setConnection(Connection $database)
 	{
-		$this->database = $database;
+		$this->connection = $database;
 	}
 
-	public function getDatabase()
+	public function hasConnection(Connection $connection)
 	{
-		return $this->database;
+		return $this->connection === $connection;
+	}
+
+	public function getConnection()
+	{
+		return $this->connection;
 	}
 
 	/**
@@ -30,30 +39,24 @@ class ClassMetadata extends BaseClassMetadata
 	{
 		$tableName = parent::getQuotedTableName($platform);
 
-		if(!is_null($this->database))
-			return $this->getDatabaseQuote($tableName);
-
-		return $tableName;
+		return $this->getDatabaseQuote($tableName);
 	}
 
 	private function getDatabaseQuote($tableName)
 	{
-		return $this->database . "." . preg_replace("/(.*)\.(.*)/i", "$2", $tableName);
+		return $this->connection->getDatabase() . "." . preg_replace("/(.*)\.(.*)/i", "$2", $tableName);
 	}
 
 	/**
 	 * Gets the (possibly quoted) name of the join table.
 	 *
-	 * @param AbstractPlatform $platform
+	 * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
 	 * @return string
 	 */
 	public function getQuotedJoinTableName(array $assoc, $platform)
 	{
 		$tableName = parent::getQuotedJoinTableName($assoc, $platform);
 
-		if(!is_null($this->database))
-			return $this->getDatabaseQuote($tableName);
-
-		return $tableName;
+		return $this->getDatabaseQuote($tableName);
 	}
 }

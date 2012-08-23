@@ -11,24 +11,23 @@ use Doctrine\ORM\Configuration as BaseConfiguration;
 
 class Configuration extends BaseConfiguration
 {
-	protected $entityDatabases = array();
-
-	public function setEntityDatabases($entityDatabases)
+	public function setConnections($connections)
 	{
-		$this->_attributes['entityDatabases'] = $entityDatabases;
+		$this->_attributes['connections'] = $connections;
 	}
 
-	public function getEntityDatabase($entityAlias)
+	public function setConnectionMap($connectionMap)
 	{
-		if(isset($this->entityDatabases[$entityAlias]))
-			return $this->entityDatabases[$entityAlias];
+		$this->_attributes['connection_map'] = $connectionMap;
+	}
 
-		preg_match("/(.*)Bundle/i", $entityAlias, $bundle);
+	public function getConnections()
+	{
+		return $this->_attributes['connections'];
+	}
 
-		$class = explode("\\", $bundle[0]);
-
-		$this->entityDatabases[$entityAlias] = $this->_attributes['entityDatabases'][array_pop($class)];
-
-		return $this->entityDatabases[$entityAlias];
+	public function getConnectionFor($entityAlias)
+	{
+		return isset($this->_attributes['connection_map'][$entityAlias]) ? $this->_attributes['connection_map'][$entityAlias] : null;
 	}
 }
