@@ -60,11 +60,17 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 
 		if(!isset($this->connectionMetadata[$className]))
 		{
-			preg_match("/(.*)Bundle/i", $className, $bundle);
+			if(!preg_match("/(.*)Bundle/i", $className, $bundle))
+			{
+				// prefixed class, do something about it
+				$connection = $this->em->getConfiguration()->getConnectionForNamespace($className);
+			}
+			else
+			{
+				$alias = explode("\\", $bundle[0]);
+				$connection = $this->em->getConfiguration()->getConnectionFor(array_pop($alias));
+			}
 
-			$alias = explode("\\", $bundle[0]);
-
-			$connection = $this->em->getConfiguration()->getConnectionFor(array_pop($alias));
 
 			$this->loadedMetadata[$className]->setConnection($connection['instance']);
 			$this->connectionMetadata[$className] = true;

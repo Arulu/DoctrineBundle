@@ -1,0 +1,58 @@
+<?php
+
+/*
+ * Copyright (c) 2012 Arulu Inversiones SL
+ * Todos los derechos reservados
+ */
+
+namespace Doctrine\Bundle\DoctrineBundle\ORM;
+
+use Doctrine\ORM\EntityManager as BaseEntityManager;
+use Doctrine\ORM\Configuration as BaseConfiguration;
+use Doctrine\Common\EventManager;
+use Doctrine\ORM\ORMException;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\Query;
+
+class EntityManager extends BaseEntityManager
+{
+	/**
+	 * {@inheritDoc}
+	 */
+	public static function create($conn, BaseConfiguration $config, EventManager $eventManager = null)
+	{
+		if ( ! $config->getMetadataDriverImpl()) {
+			throw ORMException::missingMappingDriverImpl();
+		}
+
+		switch (true) {
+			case (is_array($conn)):
+				$conn = \Doctrine\DBAL\DriverManager::getConnection(
+					$conn, $config, ($eventManager ?: new EventManager())
+				);
+				break;
+
+			case ($conn instanceof Connection):
+				if ($eventManager !== null && $conn->getEventManager() !== $eventManager) {
+					throw ORMException::mismatchedEventManager();
+				}
+				break;
+
+			default:
+				throw new \InvalidArgumentException("Invalid argument: " . $conn);
+		}
+
+		return new EntityManager($conn, $config, $conn->getEventManager());
+	}
+
+	public function createTranslatableQuery($dql = "")
+	{
+		$query = $this->createQuery($dql)
+			->setHint(
+				Query::HINT_CUSTOM_OUTPUT_WALKER,
+				'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+			);
+
+		return $query;
+	}
+}

@@ -32,6 +32,11 @@ class ClassMetadata extends BaseClassMetadata
 		return $this->connection;
 	}
 
+	public function getTableName()
+	{
+		return $this->connection->getDatabase() . "." . $this->table['name'];
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

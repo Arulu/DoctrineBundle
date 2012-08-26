@@ -6,7 +6,7 @@
 
     <parameters>
         <parameter key="doctrine.orm.configuration.class">Doctrine\Bundle\DoctrineBundle\ORM\Configuration</parameter>
-        <parameter key="doctrine.orm.entity_manager.class">Doctrine\ORM\EntityManager</parameter>
+        <parameter key="doctrine.orm.entity_manager.class">Doctrine\Bundle\DoctrineBundle\ORM\EntityManager</parameter>
         <parameter key="doctrine.orm.manager_configurator.class">Doctrine\Bundle\DoctrineBundle\ManagerConfigurator</parameter>
 
         <!-- cache -->

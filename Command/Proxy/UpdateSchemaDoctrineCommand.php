@@ -77,7 +77,9 @@ EOT
 			$output->writeln('Processing database <info>' .$connection->getDatabase(). '</info>');
 
 			// hacked this to change entityManager connection
-			$entityManager = new \ReflectionObject($em);
+			$entityManager = new \ReflectionClass(get_class($em));
+			$entityManager = $entityManager->getParentClass();
+
 			$property = $entityManager->getProperty('conn');
 
 			$property->setAccessible(true);

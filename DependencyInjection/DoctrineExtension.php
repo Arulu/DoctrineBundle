@@ -423,6 +423,9 @@ class DoctrineExtension extends AbstractDoctrineExtension
 			{
 				$connectionInstance = new Reference(sprintf('doctrine.dbal.%s_connection', $conn));
 
+				if(isset($value['prefix']))
+					$name = $value['prefix'];
+
 				$this->connectionMap[$name] = array(
 					'name' => $conn,
 					'instance' => new Reference(sprintf('doctrine.dbal.%s_connection', $conn))
