@@ -17,6 +17,11 @@ class ClassMetadata extends BaseClassMetadata
 	 */
 	protected $connection;
 
+	/**
+	 * @var ClassMetadataFactory
+	 */
+	protected $metadataFactory;
+
 	public function setConnection(Connection $database)
 	{
 		$this->connection = $database;
@@ -61,8 +66,30 @@ class ClassMetadata extends BaseClassMetadata
 
 		// special ManyToMany
 		if($assoc['type'] == 8)
-			return $tableName;
+		{
+			if(!$this->getMetadataFactory()->getMetadataFor($assoc['targetEntity'])->hasConnection($this->connection))
+			{
+				// same connection, return table without databse quote
+				return $tableName;
+			}
+		}
 
 		return $this->getDatabaseQuote($tableName);
+	}
+
+	/**
+	 * @param \Doctrine\Bundle\DoctrineBundle\Mapping\ClassMetadataFactory $metadataFactory
+	 */
+	public function setMetadataFactory($metadataFactory)
+	{
+		$this->metadataFactory = $metadataFactory;
+	}
+
+	/**
+	 * @return \Doctrine\Bundle\DoctrineBundle\Mapping\ClassMetadataFactory
+	 */
+	public function getMetadataFactory()
+	{
+		return $this->metadataFactory;
 	}
 }

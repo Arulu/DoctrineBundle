@@ -16,7 +16,7 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 	/**
 	 * @var \Doctrine\ORM\EntityManager
 	 */
-	protected $em;
+	protected $entityManager;
 
 	/**
 	 * @var array
@@ -32,7 +32,7 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 	{
 		parent::setEntityManager($entityManager);
 
-		$this->em = $entityManager;
+		$this->entityManager = $entityManager;
 	}
 
 	/**
@@ -48,7 +48,10 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 	 */
 	protected function newClassMetadataInstance($className)
 	{
-		return new ClassMetadata($className);
+		$metadata = new ClassMetadata($className);
+		$metadata->setMetadataFactory($this);
+
+		return $metadata;
 	}
 
 	/**
@@ -62,7 +65,7 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 
 		if(!isset($this->connectionMetadata[$namespace]))
 		{
-			$connection = $this->em->getConfiguration()->getConnectionForNamespace($namespace);
+			$connection = $this->entityManager->getConfiguration()->getConnectionForNamespace($namespace);
 
 			$this->loadedMetadata[$className]->setConnection($connection);
 			$this->connectionMetadata[$className] = true;
@@ -90,5 +93,13 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 		}
 
 		return $metadatasConnection;
+	}
+
+	/**
+	 * @return \Doctrine\ORM\EntityManager
+	 */
+	public function getEntityManager()
+	{
+		return $this->entityManager;
 	}
 }
