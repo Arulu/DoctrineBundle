@@ -45,13 +45,22 @@ class EntityManager extends BaseEntityManager
 		return new EntityManager($conn, $config, $conn->getEventManager());
 	}
 
-	public function createTranslatableQuery($dql = "")
+	public function createTranslatableQuery($dql = "", $locale = null)
 	{
 		$query = $this->createQuery($dql)
 			->setHint(
 				Query::HINT_CUSTOM_OUTPUT_WALKER,
 				'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
 			);
+
+		// locale
+		if($locale !== null)
+		{
+			$query->setHint(
+				\Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE,
+				$locale
+			);
+		}
 
 		return $query;
 	}
