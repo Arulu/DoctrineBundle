@@ -362,20 +362,20 @@ class DoctrineExtension extends AbstractDoctrineExtension
      *
      *  doctrine.orm:
      *     mappings:
-     *         MyBundle1: ~
-     *         MyBundle2: yml
-     *         MyBundle3: { type: annotation, dir: Entities/ }
-     *         MyBundle4: { type: xml, dir: Resources/config/doctrine/mapping }
-     *         MyBundle5:
-     *             type: yml
-     *             dir: [bundle-mappings1/, bundle-mappings2/]
-     *             alias: BundleAlias
-     *         arbitrary_key:
-     *             type: xml
-     *             dir: %kernel.dir%/../src/vendor/DoctrineExtensions/lib/DoctrineExtensions/Entities
-     *             prefix: DoctrineExtensions\Entities\
-     *             alias: DExt
-     *
+	 * 		   connection_name:
+     *             MyBundle1: ~
+     *             MyBundle2: yml
+     *             MyBundle3: { type: annotation, dir: Entities/ }
+     *             MyBundle4: { type: xml, dir: Resources/config/doctrine/mapping }
+     *             MyBundle5:
+     *                 type: yml
+     *                 dir: [bundle-mappings1/, bundle-mappings2/]
+     *                 alias: BundleAlias
+     *             arbitrary_key:
+     *                type: xml
+     *                dir: %kernel.dir%/../src/vendor/DoctrineExtensions/lib/DoctrineExtensions/Entities
+     *                prefix: DoctrineExtensions\Entities\
+     *                alias: DExt
      * In the case of bundles everything is really optional (which leads to autodetection for this bundle) but
      * in the mappings key everything except alias is a required argument.
      *
@@ -391,22 +391,8 @@ class DoctrineExtension extends AbstractDoctrineExtension
 		$this->connectionMap = array();
 
 		// backwards compatibility
-		$mappings = function($entityManager)
-		{
-			$mappings = array();
+		$entityManager = $this->normalizeMappingInfo($entityManager);
 
-			foreach($entityManager as $mapping => $database)
-			{
-				$mappings = array_merge($mappings, $database);
-			}
-
-			return $mappings;
-		};
-
-		$entityManager['database_mappings'] = $entityManager['mappings'];
-		$entityManager['mappings'] = $mappings($entityManager['mappings']);
-
-		$this->loadConnections($entityManager['database_mappings']);
         $this->loadMappingInformation($entityManager, $container);
         $this->registerMappingDrivers($entityManager, $container);
 
@@ -414,6 +400,46 @@ class DoctrineExtension extends AbstractDoctrineExtension
 		$ormConfigDef->addMethodCall('setConnections', array($this->connections));
 		$ormConfigDef->addMethodCall('setConnectionMap', array($this->connectionMap));
     }
+
+	protected function normalizeMappingInfo($entityManager)
+	{
+		$newEntityManager = $entityManager;
+
+		foreach($entityManager['mappings'] as $connection => $mapping)
+		{
+			$this->getConnectionReference($connection);
+
+			foreach($mapping as $bundle => $parameters)
+			{
+				$parameters['connection'] = $this->connections[$connection];
+
+				$newEntityManager['mappings'][$bundle] = $parameters;
+				unset($newEntityManager['mappings'][$connection]);
+			}
+		}
+
+		return $newEntityManager;
+	}
+
+	protected function getConnectionReference($name)
+	{
+		if(isset($this->connections[$name]))
+			return $this->connections[$name];
+
+		$this->connections[$name] = new Reference(sprintf('doctrine.dbal.%s_connection', $name));
+
+		return $this->connections[$name];
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function setMappingDriverAlias($mappingConfig, $mappingName)
+	{
+		parent::setMappingDriverAlias($mappingConfig, $mappingName);
+
+		$this->connectionMap[$mappingConfig['prefix']] = $mappingConfig['connection'];
+	}
 
 	protected function loadConnections(array $databaseMappings)
 	{

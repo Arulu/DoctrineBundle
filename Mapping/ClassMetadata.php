@@ -53,14 +53,15 @@ class ClassMetadata extends BaseClassMetadata
 	}
 
 	/**
-	 * Gets the (possibly quoted) name of the join table.
-	 *
-	 * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
-	 * @return string
+	 * {@inheritDoc}
 	 */
 	public function getQuotedJoinTableName(array $assoc, $platform)
 	{
 		$tableName = parent::getQuotedJoinTableName($assoc, $platform);
+
+		// special ManyToMany
+		if($assoc['type'] == 8)
+			return $tableName;
 
 		return $this->getDatabaseQuote($tableName);
 	}
