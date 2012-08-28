@@ -9,6 +9,7 @@ namespace Doctrine\Bundle\DoctrineBundle\Mapping;
 
 use Doctrine\ORM\Mapping\ClassMetadata as BaseClassMetadata;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\Mapping\MappingException;
 
 class ClassMetadata extends BaseClassMetadata
 {
@@ -21,6 +22,19 @@ class ClassMetadata extends BaseClassMetadata
 	 * @var ClassMetadataFactory
 	 */
 	protected $metadataFactory;
+
+	/**
+	 * Validate Identifier
+	 *
+	 * @return void
+	 */
+	public function validateIdentifier()
+	{
+		// Verify & complete identifier mapping
+		if ( ! $this->identifier && ! $this->isMappedSuperclass) {
+			throw MappingException::identifierRequired($this->name);
+		}
+	}
 
 	public function setConnection(Connection $database)
 	{

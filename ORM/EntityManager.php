@@ -17,6 +17,8 @@ use Gedmo\Translatable\TranslatableListener;
 
 class EntityManager extends BaseEntityManager
 {
+	protected $connections = array();
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -64,5 +66,21 @@ class EntityManager extends BaseEntityManager
 		}
 
 		return $query;
+	}
+
+	public function setConnections($connections)
+	{
+		$this->connections = $connections;
+	}
+
+	public function hasConnection(Connection $connectionOrigin)
+	{
+		foreach($this->connections as $connection)
+		{
+			if($connectionOrigin === $connection)
+				return true;
+		}
+
+		return false;
 	}
 }

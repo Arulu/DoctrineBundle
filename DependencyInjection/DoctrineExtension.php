@@ -34,6 +34,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
 {
 	protected $connectionMap = array();
 	protected $connections = array();
+	protected $entityManagers = array();
 
     /**
      * {@inheritDoc}
@@ -85,7 +86,16 @@ class DoctrineExtension extends AbstractDoctrineExtension
         $container->setParameter('doctrine.connections', $connections);
         $container->setParameter('doctrine.default_connection', $this->defaultConnection);
 
-        foreach ($config['connections'] as $name => $connection) {
+        foreach ($config['connections'] as $name => $connection)
+		{
+			if(!is_null($inheritedConnection = $connection['inherit']))
+			{
+				if(!isset($config['connections'][$inheritedConnection]))
+					throw new \Symfony\Component\Form\Exception\InvalidConfigurationException("The inherited connection '" .$inheritedConnection. "' doesn't exists");
+
+				$connection = array_merge($config['connections'][$inheritedConnection], $connection);
+			}
+
             $this->loadDbalConnection($name, $connection, $container);
         }
     }
@@ -247,6 +257,15 @@ class DoctrineExtension extends AbstractDoctrineExtension
         $container->setAlias('doctrine.orm.entity_manager', sprintf('doctrine.orm.%s_entity_manager', $config['default_entity_manager']));
 
         foreach ($config['entity_managers'] as $name => $entityManager) {
+
+			if(!is_null($entityManager['inherit']))
+			{
+				if(!isset($config['entity_managers'][$entityManager['inherit']]))
+					throw new \Symfony\Component\Form\Exception\InvalidConfigurationException("The inherited entity manager " .$entityManager['inherit']. " doesn't exists");
+
+				$entityManager['mappings'] = array_merge_recursive($config['entity_managers'][$entityManager['inherit']]['mappings'], $entityManager['mappings']);
+			}
+
             $entityManager['name'] = $name;
             $this->loadOrmEntityManager($entityManager, $container);
         }
@@ -331,10 +350,6 @@ class DoctrineExtension extends AbstractDoctrineExtension
             ->setDefinition($managerConfiguratorName, new DefinitionDecorator('doctrine.orm.manager_configurator.abstract'))
             ->replaceArgument(0, $enabledFilters)
         ;
-
-        if (!isset($entityManager['connection'])) {
-            $entityManager['connection'] = $this->defaultConnection;
-        }
 
         $container->setDefinition(sprintf('doctrine.orm.%s_entity_manager', $entityManager['name']), new DefinitionDecorator('doctrine.orm.entity_manager.abstract'))
             ->setArguments(array(
@@ -439,28 +454,6 @@ class DoctrineExtension extends AbstractDoctrineExtension
 		parent::setMappingDriverAlias($mappingConfig, $mappingName);
 
 		$this->connectionMap[$mappingConfig['prefix']] = $mappingConfig['connection'];
-	}
-
-	protected function loadConnections(array $databaseMappings)
-	{
-		foreach($databaseMappings as $conn => $bundle)
-		{
-			foreach($bundle as $name => $value)
-			{
-				$connectionInstance = new Reference(sprintf('doctrine.dbal.%s_connection', $conn));
-
-				if(isset($value['prefix']))
-					$name = $value['prefix'];
-
-				$this->connectionMap[$name] = array(
-					'name' => $conn,
-					'instance' => new Reference(sprintf('doctrine.dbal.%s_connection', $conn))
-				);
-
-				if(!isset($this->connections[$conn]))
-					$this->connections[$conn] = $connectionInstance;
-			}
-		}
 	}
 
     /**
