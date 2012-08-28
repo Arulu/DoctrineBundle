@@ -351,9 +351,11 @@ class DoctrineExtension extends AbstractDoctrineExtension
             ->replaceArgument(0, $enabledFilters)
         ;
 
+		$defaultConnection = array_keys($entityManager['mappings'])[0];
+
         $container->setDefinition(sprintf('doctrine.orm.%s_entity_manager', $entityManager['name']), new DefinitionDecorator('doctrine.orm.entity_manager.abstract'))
             ->setArguments(array(
-				new Reference(sprintf('doctrine.dbal.%s_connection', $entityManager['connection'])),
+				new Reference(sprintf('doctrine.dbal.%s_connection', $defaultConnection)),
                 new Reference(sprintf('doctrine.orm.%s_configuration', $entityManager['name']))
             ))
             ->setConfigurator(array(new Reference($managerConfiguratorName), 'configure'))
@@ -361,7 +363,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
 
         $container->setAlias(
             sprintf('doctrine.orm.%s_entity_manager.event_manager', $entityManager['name']),
-            new Alias(sprintf('doctrine.dbal.%s_connection.event_manager', $entityManager['connection']), false)
+            new Alias(sprintf('doctrine.dbal.%s_connection.event_manager', $defaultConnection), false)
         );
     }
 
