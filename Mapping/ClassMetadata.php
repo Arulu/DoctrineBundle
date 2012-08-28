@@ -67,10 +67,11 @@ class ClassMetadata extends BaseClassMetadata
 		// special ManyToMany
 		if($assoc['type'] == 8)
 		{
-			if(!$this->getMetadataFactory()->getMetadataFor($assoc['targetEntity'])->hasConnection($this->connection))
+			$metadataTarget = $this->getMetadataFactory()->getMetadataFor($assoc['sourceEntity']);
+
+			if($assoc['isOwningSide'])
 			{
-				// same connection, return table without databse quote
-				return $tableName;
+				return $metadataTarget->getConnection()->getDatabase() . ".". $tableName;
 			}
 		}
 
