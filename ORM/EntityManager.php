@@ -13,6 +13,7 @@ use Doctrine\Common\EventManager;
 use Doctrine\ORM\ORMException;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Query;
+use Gedmo\Translatable\TranslatableListener;
 
 class EntityManager extends BaseEntityManager
 {
@@ -57,7 +58,7 @@ class EntityManager extends BaseEntityManager
 		if($locale !== null)
 		{
 			$query->setHint(
-				\Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE,
+				TranslatableListener::HINT_TRANSLATABLE_LOCALE,
 				$locale
 			);
 		}
