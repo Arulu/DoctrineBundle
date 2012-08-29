@@ -68,7 +68,9 @@ class ClassMetadata extends BaseClassMetadata
 
 	private function getDatabaseQuote($tableName)
 	{
-		return $this->connection->getDatabase() . "." . preg_replace("/(.*)\.(.*)/i", "$2", $tableName);
+		$table = $this->connection->getDatabase() . "." . preg_replace("/(.*)\.(.*)/i", "$2", $tableName);
+
+		return $table;
 	}
 
 	/**
