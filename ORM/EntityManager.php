@@ -14,6 +14,7 @@ use Doctrine\ORM\ORMException;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Query;
 use Gedmo\Translatable\TranslatableListener;
+use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class EntityManager extends BaseEntityManager
 {
@@ -82,5 +83,14 @@ class EntityManager extends BaseEntityManager
 		}
 
 		return false;
+	}
+
+	public function getRepository($entityName)
+	{
+		$repo = parent::getRepository($entityName);
+		if($repo instanceof ContainerAwareInterface)
+			$repo->setContainer($this->getConfiguration()->getContainer());
+
+		return $repo;
 	}
 }

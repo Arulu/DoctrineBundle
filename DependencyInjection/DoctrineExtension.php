@@ -309,6 +309,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
             'setAutoGenerateProxyClasses' => '%doctrine.orm.auto_generate_proxy_classes%',
             'setClassMetadataFactoryName' => $entityManager['class_metadata_factory_name'],
             'setDefaultRepositoryClassName' => $entityManager['default_repository_class'],
+            'setContainer' => new Reference('service_container'),
         );
 
         // check for version to keep BC

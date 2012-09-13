@@ -8,8 +8,10 @@
 namespace Doctrine\Bundle\DoctrineBundle\ORM;
 
 use Doctrine\ORM\Configuration as BaseConfiguration;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface,
+	Symfony\Component\DependencyInjection\ContainerInterface;
 
-class Configuration extends BaseConfiguration
+class Configuration extends BaseConfiguration implements ContainerAwareInterface
 {
 	public function setConnections($connections)
 	{
@@ -46,5 +48,21 @@ class Configuration extends BaseConfiguration
 				return $connection;
 			}
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setContainer(ContainerInterface $container = null)
+	{
+		$this->_attributes['container'] = $container;
+	}
+
+	/**
+	 * @return ContainerInterface
+	 */
+	public function getContainer()
+	{
+		return $this->_attributes['container'];
 	}
 }
