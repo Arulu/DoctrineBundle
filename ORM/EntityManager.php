@@ -14,9 +14,12 @@ use Doctrine\ORM\ORMException;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Query;
 use Gedmo\Translatable\TranslatableListener;
+use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class EntityManager extends BaseEntityManager
 {
+	protected $connections = array();
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -64,5 +67,30 @@ class EntityManager extends BaseEntityManager
 		}
 
 		return $query;
+	}
+
+	public function setConnections($connections)
+	{
+		$this->connections = $connections;
+	}
+
+	public function hasConnection(Connection $connectionOrigin)
+	{
+		foreach($this->connections as $connection)
+		{
+			if($connectionOrigin === $connection)
+				return true;
+		}
+
+		return false;
+	}
+
+	public function getRepository($entityName)
+	{
+		$repo = parent::getRepository($entityName);
+		if($repo instanceof ContainerAwareInterface)
+			$repo->setContainer($this->getConfiguration()->getContainer());
+
+		return $repo;
 	}
 }

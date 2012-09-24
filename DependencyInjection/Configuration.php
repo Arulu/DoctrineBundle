@@ -172,6 +172,7 @@ class Configuration implements ConfigurationInterface
     {
         $node
             ->children()
+				->scalarNode('master')->defaultValue(null)->end()
 				->scalarNode('inherit')->defaultValue(null)->end()
                 ->scalarNode('dbname')->end()
                 ->scalarNode('host')->end()

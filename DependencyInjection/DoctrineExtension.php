@@ -96,7 +96,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
 				$connection = array_merge($config['connections'][$inheritedConnection], $connection);
 			}
 
-            $this->loadDbalConnection($name, $connection, $container);
+            $this->loadDbalConnection($name, $connection, $container, $connection['master']);
         }
     }
 
@@ -107,7 +107,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
      * @param array            $connection A dbal connection configuration.
      * @param ContainerBuilder $container  A ContainerBuilder instance
      */
-    protected function loadDbalConnection($name, array $connection, ContainerBuilder $container)
+    protected function loadDbalConnection($name, array $connection, ContainerBuilder $container, $masterConnection)
     {
         // configuration
         $configuration = $container->setDefinition(sprintf('doctrine.dbal.%s_connection.configuration', $name), new DefinitionDecorator('doctrine.dbal.connection.configuration'));
@@ -172,6 +172,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
                 new Reference(sprintf('doctrine.dbal.%s_connection.configuration', $name)),
                 new Reference(sprintf('doctrine.dbal.%s_connection.event_manager', $name)),
                 $connection['mapping_types'],
+				$masterConnection ? new Reference(sprintf('doctrine.dbal.%s_connection', $masterConnection)) : null
             ))
         ;
     }
@@ -309,6 +310,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
             'setAutoGenerateProxyClasses' => '%doctrine.orm.auto_generate_proxy_classes%',
             'setClassMetadataFactoryName' => $entityManager['class_metadata_factory_name'],
             'setDefaultRepositoryClassName' => $entityManager['default_repository_class'],
+            'setContainer' => new Reference('service_container'),
         );
 
         // check for version to keep BC

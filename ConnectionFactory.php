@@ -47,14 +47,14 @@ class ConnectionFactory
      *
      * @return \Doctrine\DBAL\Connection
      */
-    public function createConnection(array $params, Configuration $config = null, EventManager $eventManager = null, array $mappingTypes = array())
+    public function createConnection(array $params, Configuration $config = null, EventManager $eventManager = null, array $mappingTypes = array(), $masterConnection = null)
     {
         if (!$this->initialized) {
             $this->initializeTypes();
             $this->initialized = true;
         }
 
-        $connection = DriverManager::getConnection($params, $config, $eventManager);
+        $connection = DriverManager::getConnection($params, $config, $eventManager, $masterConnection);
 
         if (!empty($mappingTypes)) {
             $platform = $connection->getDatabasePlatform();
