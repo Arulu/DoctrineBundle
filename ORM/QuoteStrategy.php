@@ -13,6 +13,11 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 class QuoteStrategy extends DefaultQuoteStrategy
 {
+	/**
+	 * @var Configuration
+	 */
+	protected $configuration;
+
 	private function getDatabaseQuote($tableName, ClassMetadata $class)
 	{
 		return $class->getConnection()->getDatabase() . "." . $tableName;
@@ -35,6 +40,26 @@ class QuoteStrategy extends DefaultQuoteStrategy
 	{
 		$table = parent::getJoinTableName($association, $class, $platform);
 
+		if($association['type'] == 8)
+		{
+			if($association['isOwningSide'])
+			{
+				$metadataTarget = $class->getMetadataFactory()->getMetadataFor($association['sourceEntity']);
+
+				return $this->getDatabaseQuote($table, $metadataTarget);
+			}
+		}
+
 		return $this->getDatabaseQuote($table, $class);
+	}
+
+	public function setConfiguration($configuration)
+	{
+		$this->configuration = $configuration;
+	}
+
+	public function getConfiguration()
+	{
+		return $this->configuration;
 	}
 }

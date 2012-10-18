@@ -77,6 +77,7 @@ class Configuration extends BaseConfiguration implements ContainerAwareInterface
 	{
 		if ( ! isset($this->_attributes['quoteStrategy'])) {
 			$this->_attributes['quoteStrategy'] = new QuoteStrategy();
+			$this->_attributes['quoteStrategy']->setConfiguration($this);
 		}
 
 		return $this->_attributes['quoteStrategy'];
