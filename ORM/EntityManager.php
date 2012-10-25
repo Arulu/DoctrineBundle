@@ -49,6 +49,9 @@ class EntityManager extends BaseEntityManager
 		return new EntityManager($conn, $config, $conn->getEventManager());
 	}
 
+	/**
+	 * @deprecated Use the EntityRepository method :)
+	 */
 	public function createTranslatableQuery($dql = "", $locale = null)
 	{
 		$query = $this->createQuery($dql)
