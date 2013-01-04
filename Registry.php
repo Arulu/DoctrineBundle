@@ -27,6 +27,8 @@ use Doctrine\ORM\EntityManager;
  */
 class Registry extends ManagerRegistry implements RegistryInterface
 {
+	protected $managers, $proxyInterfaceName;
+
     /**
      * Construct.
      *
@@ -39,8 +41,10 @@ class Registry extends ManagerRegistry implements RegistryInterface
     public function __construct(ContainerInterface $container, array $connections, array $entityManagers, $defaultConnection, $defaultEntityManager)
     {
         $this->setContainer($container);
+        $this->managers = $entityManagers;
+        $this->proxyInterfaceName = 'Doctrine\ORM\Proxy\Proxy';
 
-        parent::__construct('ORM', $connections, $entityManagers, $defaultConnection, $defaultEntityManager, 'Doctrine\ORM\Proxy\Proxy');
+		parent::__construct('ORM', $connections, $entityManagers, $defaultConnection, $defaultEntityManager, $this->proxyInterfaceName);
     }
 
     /**
@@ -160,5 +164,35 @@ class Registry extends ManagerRegistry implements RegistryInterface
     public function getEntityManagerForClass($class)
     {
         return $this->getManagerForClass($class);
+    }
+
+	public function getManagerForClass($class)
+    {
+        // Check for namespace alias
+        if (strpos($class, ':') !== false) {
+            list($namespaceAlias, $simpleClassName) = explode(':', $class);
+            $class = $this->getAliasNamespace($namespaceAlias) . '\\' . $simpleClassName;
+        }
+
+        $proxyClass = new \ReflectionClass($class);
+        if ($proxyClass->implementsInterface($this->proxyInterfaceName)) {
+            $class = $proxyClass->getParentClass()->getName();
+        }
+
+		$compatibleManagers = [];
+        foreach ($this->managers as $id) {
+            $manager = $this->getService($id);
+
+            if (!$manager->getMetadataFactory()->isTransient($class)) {
+                $compatibleManagers[] = $manager;
+            }
+        }
+
+		if(count($compatibleManagers) == 1)
+			return $compatibleManagers[0];
+		else if(!$this->getManager()->getMetadataFactory()->isTransient($class))
+			return $this->getManager();
+		else
+			throw new \Exception("Class $class is available through various managers and not through the default one, so you should specify which entity manager use.");
     }
 }
