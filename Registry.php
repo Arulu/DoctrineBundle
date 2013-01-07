@@ -188,7 +188,9 @@ class Registry extends ManagerRegistry implements RegistryInterface
             }
         }
 
-		if(count($compatibleManagers) == 1)
+		if(!count($compatibleManagers))
+			return;
+		else if(count($compatibleManagers) == 1)
 			return $compatibleManagers[0];
 		else if(!$this->getManager()->getMetadataFactory()->isTransient($class))
 			return $this->getManager();
