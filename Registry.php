@@ -194,7 +194,5 @@ class Registry extends ManagerRegistry implements RegistryInterface
 			return $compatibleManagers[0];
 		else if(!$this->getManager()->getMetadataFactory()->isTransient($class))
 			return $this->getManager();
-		else
-			throw new \Exception("Class $class is available through various managers and not through the default one, so you should specify which entity manager use.");
     }
 }
