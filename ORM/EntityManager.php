@@ -94,6 +94,10 @@ class EntityManager extends BaseEntityManager
 		$repo = parent::getRepository($entityName);
 		if($repo instanceof ContainerAwareInterface)
 			$repo->setContainer($this->getConfiguration()->getContainer());
+		if($this->getConfiguration()->getUseBaseQueryCriteria())
+			$repo->initBaseQueryCriteria();
+		if($this->getConfiguration()->getUseEntityWalker())
+			$repo->initEntityWalker();
 
 		return $repo;
 	}

@@ -82,4 +82,24 @@ class Configuration extends BaseConfiguration implements ContainerAwareInterface
 
 		return $this->_attributes['quoteStrategy'];
 	}
+
+	public function setUseBaseQueryCriteria($useBaseQueryCriteria = true)
+	{
+        $this->_attributes['use_base_query_criteria'] = $useBaseQueryCriteria;
+	}
+
+	public function getUseBaseQueryCriteria()
+	{
+        return $this->_attributes['use_base_query_criteria'];
+	}
+
+	public function setUseEntityWalker($useEntityWalker = true)
+	{
+        $this->_attributes['use_entity_walker'] = $useEntityWalker;
+	}
+
+	public function getUseEntityWalker()
+	{
+        return $this->_attributes['use_entity_walker'];
+	}
 }
