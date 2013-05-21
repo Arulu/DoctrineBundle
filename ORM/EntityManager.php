@@ -7,6 +7,7 @@
 
 namespace Doctrine\Bundle\DoctrineBundle\ORM;
 
+use Arulu\Reusable\EntityRepository;
 use Doctrine\ORM\EntityManager as BaseEntityManager;
 use Doctrine\ORM\Configuration as BaseConfiguration;
 use Doctrine\Common\EventManager;
@@ -94,10 +95,13 @@ class EntityManager extends BaseEntityManager
 		$repo = parent::getRepository($entityName);
 		if($repo instanceof ContainerAwareInterface)
 			$repo->setContainer($this->getConfiguration()->getContainer());
-		if($this->getConfiguration()->getUseBaseQueryCriteria())
-			$repo->initBaseQueryCriteria();
-		if($this->getConfiguration()->getUseEntityWalker())
-			$repo->initEntityWalker();
+		if($repo instanceof EntityRepository)
+		{
+			if($this->getConfiguration()->getUseBaseQueryCriteria())
+				$repo->initBaseQueryCriteria();
+			if($this->getConfiguration()->getUseEntityWalker())
+				$repo->initEntityWalker();
+		}
 
 		return $repo;
 	}
