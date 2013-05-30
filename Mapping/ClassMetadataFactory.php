@@ -67,7 +67,9 @@ class ClassMetadataFactory extends BaseClassMetadataFactory
 		{
 			$connection = $this->entityManager->getConfiguration()->getConnectionForNamespace($namespace);
 
-			$this->loadedMetadata[$className]->setConnection($connection);
+            if(!is_null($connection))
+			    $this->loadedMetadata[$className]->setConnection($connection);
+
 			$this->connectionMetadata[$className] = true;
 		}
 
